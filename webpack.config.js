@@ -1,22 +1,24 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-
-const htmlWebpackPlugin = new HtmlWebpackPlugin({
-  template: path.join(__dirname, "/src/index.html"),
-  filename: "./index.html"
-});
+var path = require("path");
 module.exports = {
-  entry: path.join(__dirname, "./src/index.jsx"),
+  mode: "production",
+  entry: "./src/index.js",
   output: {
-    path: path.join(__dirname, "./dist/index.js"),
-    filename: "bundle.js"
+    path: path.resolve(__dirname, "build"),
+    filename: "index.js",
+    libraryTarget: "commonjs2"
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        use: "babel-loader",
-        exclude: /node_modules/
+        include: path.resolve(__dirname, "src"),
+        exclude: /(node_modules|bower_components|build)/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["env"]
+          }
+        }
       },
       {
         test: /\.css$/,
@@ -24,11 +26,7 @@ module.exports = {
       }
     ]
   },
-  plugins: [htmlWebpackPlugin],
-  resolve: {
-    extensions: [".js", ".jsx"]
-  },
-  devServer: {
-    port: 3001
+  externals: {
+    react: "commonjs react"
   }
 };
